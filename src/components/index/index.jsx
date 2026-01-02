@@ -4,7 +4,7 @@ const Index = () => {
     return (
         <div>
             <h1>Привет!</h1>
-            <button onClick={() => {window.location.href = '/remixtree.html'}}>Дерево ремиксов</button>
+            <button onClick={() => {window.location.href = '/dbdevtools-www/remixtree.html'}}>Дерево ремиксов</button>
         </div>
     );
 }
