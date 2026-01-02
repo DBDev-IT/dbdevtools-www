@@ -1,0 +1,92 @@
+h1 {
+  color: #4a90e2;
+  margin-bottom: 1rem;
+}
+
+input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 400px;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-left: 10px;
+}
+
+button:hover {
+  background-color: #357abd;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.tree {
+  text-align: left;
+  margin: 20px 0;
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.tree ul {
+  position: relative;
+  padding-left: 20px;
+  list-style: none;
+}
+
+.tree li {
+  position: relative;
+  padding-left: 20px;
+  margin-bottom: 5px;
+}
+
+.tree li::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 0;
+  width: 10px;
+  height: 1px;
+  background: #4a90e2;
+}
+
+.tree li::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: #4a90e2;
+}
+
+.tree li:last-child::after {
+  height: 10px;
+}
+
+.tree ul ul {
+  margin-top: 5px;
+}
+
+.tree a {
+  color: #4a90e2;
+  text-decoration: none;
+}
+
+.tree a:hover {
+  text-decoration: underline;
+}
