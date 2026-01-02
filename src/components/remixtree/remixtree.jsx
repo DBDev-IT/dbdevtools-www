@@ -18,7 +18,7 @@ const Remixtree = () => {
 
 	async function fetchRemixesRecursive(projectId) {
 		try {
-			const response = await fetch(`https://proxy.corsfix.com/?https://api.scratch.mit.edu/projects/${projectId}/remixes`);
+			const response = await fetch(`https://api.codetabs.com/v1/proxy?quest=https://api.scratch.mit.edu/projects/${projectId}/remixes`);
 			const remixes = await response.json();
 			if (!Array.isArray(remixes) || remixes.length === 0) return '';
 
@@ -42,7 +42,7 @@ const Remixtree = () => {
 		if (!projectId) return;
 
 		let removedProject = false;
-		const projectInfo = await fetch(`https://proxy.corsfix.com/?https://api.scratch.mit.edu/projects/${projectId}`)
+		const projectInfo = await fetch(`https://api.codetabs.com/v1/proxy?quest=https://api.scratch.mit.edu/projects/${projectId}`)
 			.then(async response => {
 				const data = await response.json();
 				if (!data) return;
@@ -101,7 +101,7 @@ const Remixtree = () => {
 		} else id = args[0];
 
 		try {
-			const response = await fetch(`https://proxy.corsfix.com/?https://api.scratch.mit.edu/projects/${id}/remixes`);
+			const response = await fetch(`https://api.codetabs.com/v1/proxy?quest=https://api.scratch.mit.edu/projects/${id}/remixes`);
 			const data = await response.json();
 			const cleanedData = await handleRemixtreeData(data, id);
 			if (!cleanedData) throw new Error("<b>Произошла ошибка</b>, проверьте правильность ID либо попробуйте снова позже");
