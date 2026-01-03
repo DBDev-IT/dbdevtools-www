@@ -3,7 +3,7 @@ import './remixtree.css';
 
 const Remixtree = () => {
 	const [input, setInput] = useState("");
-	const [output, setOutput] = useState("");
+	const [output, setOutput] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
 
 	function escapeHtml(unsafe) {
@@ -22,17 +22,16 @@ const Remixtree = () => {
 			const remixes = await response.json();
 			if (!Array.isArray(remixes) || remixes.length === 0) return '';
 
-			let html = '<ul>';
+			setOutput(prev => [...prev, '<ul>']);
 			for (let remix of remixes) {
-				html += `<li><a href="https://scratch.mit.edu/projects/${remix.id}" target="_blank">${escapeHtml(remix.title)}</a>`;
+				setOutput(prev => [...prev, `<li><a href="https://scratch.mit.edu/projects/${remix.id}" target="_blank">${escapeHtml(remix.title)}</a>`]);
 				const subtree = await fetchRemixesRecursive(remix.id);
-				html += subtree + '</li>';
+				setOutput(prev => [...prev, subtree]);
+				setOutput(prev => [...prev, '</li>']);
 			}
-			html += '</ul>';
-			return html;
+			setOutput(prev => [...prev, '</ul>']);
 		} catch (error) {
 			console.error(error);
-			return '';
 		}
 	}
 
@@ -55,38 +54,36 @@ const Remixtree = () => {
 		}
 		if (data.length === 0) throw new Error("<b>Ремиксов нет!</b>");
 
-		let html = '';
 		if (removedProject) {
-			html += "<b>Такого проекта нет или проект удалён</b>, но я всё равно попытаюсь найти ремиксы<br>";
+			setOutput(prev => [...prev, "<b>Такого проекта нет или проект удалён</b>, но я всё равно попытаюсь найти ремиксы<br>"]);
 		}
-		html += `<b>Дерево ремиксов проекта <a href="https://scratch.mit.edu/projects/${projectId}" target="_blank">${removedProject ? "Удалённый проект" : escapeHtml(projectInfo.title)}</a>:</b><br><div class="tree"><ul>`;
+
+		setOutput(prev => [...prev, `<b>Дерево ремиксов проекта <a href="https://scratch.mit.edu/projects/${projectId}" target="_blank">${removedProject ? "Удалённый проект" : escapeHtml(projectInfo.title)}</a>:</b><br><div class="tree"><ul>`]);
 		for (let value of data) {
-			html += `<li><a href="https://scratch.mit.edu/projects/${value.id}" target="_blank">${escapeHtml(value.title)}</a>`;
+			setOutput(prev => [...prev, `<li><a href="https://scratch.mit.edu/projects/${value.id}" target="_blank">${escapeHtml(value.title)}</a>`]);
 
 			try {
-				const subtree = await Promise.race([
-					fetchRemixesRecursive(value.id),
-					new Promise((_, reject) => setTimeout(() => reject(new Error(`<b>Превышено время ожидания</b>, <b>5</b> минут`)), 300000))
-				]);
-				html += subtree;
+				const subtree = await fetchRemixesRecursive(value.id);
+				setOutput(prev => [...prev, subtree]);
 			} catch (error) {
-				html += '<br>' + error.message;
+				setOutput(prev => [...prev, '<br>' + error.message]);
 			}
-			html += '</li>';
+			setOutput(prev => [...prev, '</li>']);
 		}
-		html += '</ul></div>';
-		return html;
+		setOutput(prev => [...prev, "Конец"]);
+		setOutput(prev => [...prev, '</ul></div>']);
+		return output;
 	}
 
 	const handleLoad = async () => {
 		const args = input.trim().split(" ");
 		if (!args[0]) {
-			setOutput("<b>Нужна ссылка или ID проекта</b> (пример: https://scratch.mit.edu/projects/1)");
+			setOutput(["<b>Нужна ссылка или ID проекта</b> (пример: https://scratch.mit.edu/projects/1)"]);
 			return;
 		}
 
 		setIsLoading(true);
-		setOutput("<b>Загружаю...</b> (может занять время, таймаут <b>5</b> минут)");
+		setOutput(["<b>Загружаю...</b> (может занять время)<br />"]);
 
 		let id;
 		if (args[0].includes("scratch.mit.edu")) {
@@ -94,7 +91,7 @@ const Remixtree = () => {
 			if (search[4]) id = search[4];
 			else if (search[2]) id = search[2];
 			else {
-				setOutput("<b>Я не нашёл ID</b>, проверь правильность URL");
+				setOutput(["<b>Я не нашёл ID</b>, проверь правильность URL"]);
 				setIsLoading(false);
 				return;
 			}
@@ -104,10 +101,9 @@ const Remixtree = () => {
 			const response = await fetch(`https://api.codetabs.com/v1/proxy?quest=https://api.scratch.mit.edu/projects/${id}/remixes`);
 			const data = await response.json();
 			const cleanedData = await handleRemixtreeData(data, id);
-			if (!cleanedData) throw new Error("<b>Произошла ошибка</b>, проверьте правильность ID либо попробуйте снова позже");
-			setOutput(cleanedData);
+			if (cleanedData.length === 1) throw new Error("<b>Произошла ошибка</b>, проверьте правильность ID либо попробуйте снова позже");
 		} catch (error) {
-			setOutput(error.message);
+			setOutput([error.message]);
 		} finally {
 			setIsLoading(false);
 		}
@@ -126,7 +122,7 @@ const Remixtree = () => {
 				<button onClick={handleLoad} disabled={isLoading}>
 					Загрузить
 				</button>
-				<div className="tree" dangerouslySetInnerHTML={{ __html: output }} />
+				<div className="tree" dangerouslySetInnerHTML={{__html: output.join('')}} />
 			</div>
 		</>
 	);
