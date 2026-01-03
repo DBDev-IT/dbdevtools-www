@@ -55,7 +55,7 @@ const Remixtree = () => {
 		if (data.length === 0) throw new Error("<b>Ремиксов нет!</b>");
 
 		if (removedProject) {
-			setOutput(prev => [...prev, "<b>Такого проекта нет или проект удалён</b>, но я всё равно попытаюсь найти ремиксы<br>"]);
+			setOutput(prev => [...prev, "<b>Такого проекта нет или проект удалён</b>, но я всё равно попытаюсь найти ремиксы<br />"]);
 		}
 
 		setOutput(prev => [...prev, `<b>Дерево ремиксов проекта <a href="https://scratch.mit.edu/projects/${projectId}" target="_blank">${removedProject ? "Удалённый проект" : escapeHtml(projectInfo.title)}</a>:</b><br><div class="tree"><ul>`]);
